@@ -31,11 +31,23 @@ import java.util.regex.Pattern;
 
 public class TreeContext {
 
-    private final Map<String, Object> metadata = new HashMap<>();
+    private Map<String, Object> metadata = new HashMap<>();
 
-    private final MetadataSerializers serializers = new MetadataSerializers();
+    private MetadataSerializers serializers = new MetadataSerializers();
 
     private Tree root;
+
+    public TreeContext() {}
+
+    public TreeContext(TreeContext ctxt) {
+        this(ctxt.metadata, ctxt.serializers, ctxt.root);
+    }
+
+    private TreeContext(Map metadata, MetadataSerializers serializers, Tree root) {
+        this.metadata = metadata;
+        this.serializers = serializers;
+        this.root = root;
+    }
 
     @Override
     public String toString() {

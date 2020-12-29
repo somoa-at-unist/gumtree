@@ -53,7 +53,7 @@ public abstract class AbstractJdtTreeGenerator extends TreeGenerator {
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public TreeContext generate(Reader r) throws IOException {
+    public JdtTreeContext generate(Reader r) throws IOException {
         ASTParser parser = ASTParser.newParser(AST.JLS14);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         Map pOptions = JavaCore.getOptions();
@@ -71,7 +71,8 @@ public abstract class AbstractJdtTreeGenerator extends TreeGenerator {
         if ((node.getFlags() & ASTNode.MALFORMED) != 0) // bitwise flag to check if the node has a syntax error
             throw new SyntaxException(this, r);
         node.accept(v);
-        return v.getTreeContext();
+        TreeContext ctxt = v.getTreeContext();
+        return new JdtTreeContext(ctxt, node);
     }
 
     protected abstract AbstractJdtVisitor createVisitor(IScanner scanner);

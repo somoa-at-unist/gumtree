@@ -21,10 +21,17 @@
 package com.github.gumtreediff.gen.jdt;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 import com.github.gumtreediff.gen.SyntaxException;
+import com.github.gumtreediff.io.TreeIoUtils;
+import com.github.gumtreediff.matchers.MappingStore;
+import com.github.gumtreediff.matchers.Matcher;
+import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.*;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -157,5 +164,44 @@ public class TestJdtGenerator {
         assertEquals(ct.getRoot().getChild("0.2").getMetadata("id"), "Field a");
         assertEquals(ct.getRoot().getChild("0.3").getMetadata("id"), "Method foo( int String)");
         assertEquals(ct.getRoot().getChild("0.4").getMetadata("id"), "Method bar()");
+    }
+
+    @Test
+    public void testGenerator() throws IOException {
+        Path file = FileSystems.getDefault().getPath("src", "test", "resources", "simple", "Example_v0.java");
+        TreeContext tc = new JdtTreeGenerator().generateFrom().file(file); // retrieve the default generator for the file
+        Tree t = tc.getRoot(); // return the root of the tree
+        System.out.println(TreeIoUtils.toLisp(tc).toString()); // displays the tree in LISP syntax
+    }
+
+    @Test
+    public void testMapping() throws IOException {
+        Path srcFile = FileSystems.getDefault().getPath("src", "test", "resources", "simple", "Example_v0.java");
+        Path dstFile = FileSystems.getDefault().getPath("src", "test", "resources", "simple", "Example_v1.java");
+
+        JdtTreeContext srcTreeCtxt = (JdtTreeContext) new JdtTreeGenerator().generateFrom().file(srcFile);
+        JdtTreeContext dstTreeCtxt = (JdtTreeContext) new JdtTreeGenerator().generateFrom().file(dstFile);
+        
+        final Tree srcRoot = srcTreeCtxt.getRoot();
+        final Tree dstRoot = dstTreeCtxt.getRoot();
+
+        final CompilationUnit srcRootASTNode = (CompilationUnit) srcTreeCtxt.getRootNode();
+        final CompilationUnit dstRootASTNode = (CompilationUnit) dstTreeCtxt.getRootNode();
+
+        Matcher defaultMatcher = Matchers.getInstance().getMatcher();
+        final MappingStore mappings = defaultMatcher.match(srcRoot, dstRoot);
+        TreeVisitor.visitTree(srcRoot, new TreeVisitor(){
+            @Override
+            public void startTree(Tree tree) {
+                int srcLine = srcRootASTNode.getLineNumber(tree.getPos());
+                Tree matching = mappings.getDstForSrc(tree);
+                int dstLine = dstRootASTNode.getLineNumber(matching.getPos());
+                System.out.println(srcLine + " : " + dstLine);
+            }
+
+            @Override
+            public void endTree(Tree tree) {
+            }
+        });
     }
 }
