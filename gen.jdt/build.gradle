@@ -1,6 +1,20 @@
 description = 'GumTree tree generator for Java code (Eclipse JDT based).'
-
+apply plugin: 'java-library'
+apply plugin: 'java'
 dependencies {
-	implementation project(':core')
-	implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.23.0'
+	api project(':core')
+	api 'org.eclipse.jdt:org.eclipse.jdt.core:3.23.0'
+}
+
+jar {
+	archiveClassifier = "all"
+	from {
+		configurations.compile.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+		//configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+	exclude  'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+	archiveName "com.github.gumtreediff.jar"
 }
