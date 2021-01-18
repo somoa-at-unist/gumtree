@@ -77,7 +77,7 @@ public class HungarianSubtreeMatcher extends AbstractSubtreeMatcher {
     }
 
     protected double sim(Tree src, Tree dst) {
-        var jaccard = SimilarityMetrics.jaccardSimilarity(src.getParent(), dst.getParent(), mappings);
+        double jaccard = SimilarityMetrics.jaccardSimilarity(src.getParent(), dst.getParent(), mappings);
         int posSrc = (src.isRoot()) ? 0 : src.getParent().getChildPosition(src);
         int posDst = (dst.isRoot()) ? 0 : dst.getParent().getChildPosition(dst);
         int maxSrcPos = (src.isRoot()) ? 1 : src.getParent().getChildren().size();

@@ -48,12 +48,12 @@ public class SimpleBottomUpMatcher implements Matcher {
             else if (!(mappings.isSrcMapped(t) || t.isLeaf())) {
                 List<Tree> candidates = getDstCandidates(mappings, t);
                 Tree best = null;
-                var max = -1D;
-                var tSize = t.getDescendants().size();
+                double max = -1D;
+                int tSize = t.getDescendants().size();
 
-                for (var candidate : candidates) {
-                    var threshold = 1D / (1D + Math.log(candidate.getDescendants().size() + tSize));
-                    var sim = SimilarityMetrics.chawatheSimilarity(t, candidate, mappings);
+                for (Tree candidate : candidates) {
+                    double threshold = 1D / (1D + Math.log(candidate.getDescendants().size() + tSize));
+                    double sim = SimilarityMetrics.chawatheSimilarity(t, candidate, mappings);
                     if (sim > max && sim >= threshold) {
                         max = sim;
                         best = candidate;
@@ -81,9 +81,9 @@ public class SimpleBottomUpMatcher implements Matcher {
         }
         List<Tree> candidates = new ArrayList<>();
         Set<Tree> visited = new HashSet<>();
-        for (var seed : seeds) {
+        for (Tree seed : seeds) {
             while (seed.getParent() != null) {
-                var parent = seed.getParent();
+                Tree parent = seed.getParent();
                 if (visited.contains(parent))
                     break;
                 visited.add(parent);
@@ -112,8 +112,8 @@ public class SimpleBottomUpMatcher implements Matcher {
 
         List<int[]> lcs = SequenceAlgorithms.longestCommonSubsequenceWithIsomorphism(srcChildren, dstChildren);
         for (int[] x : lcs) {
-            var t1 = srcChildren.get(x[0]);
-            var t2 = dstChildren.get(x[1]);
+            Tree t1 = srcChildren.get(x[0]);
+            Tree t2 = dstChildren.get(x[1]);
             if (mappings.areSrcsUnmapped(TreeUtils.preOrder(t1)) && mappings.areDstsUnmapped(TreeUtils.preOrder(t2)))
                 mappings.addMappingRecursively(t1, t2);
         }
@@ -125,8 +125,8 @@ public class SimpleBottomUpMatcher implements Matcher {
 
         List<int[]> lcs = SequenceAlgorithms.longestCommonSubsequenceWithIsostructure(srcChildren, dstChildren);
         for (int[] x : lcs) {
-            var t1 = srcChildren.get(x[0]);
-            var t2 = dstChildren.get(x[1]);
+            Tree t1 = srcChildren.get(x[0]);
+            Tree t2 = dstChildren.get(x[1]);
             if (mappings.areSrcsUnmapped(TreeUtils.preOrder(t1)) && mappings.areDstsUnmapped(TreeUtils.preOrder(t2)))
                 mappings.addMappingRecursively(t1, t2);
         }
@@ -137,14 +137,14 @@ public class SimpleBottomUpMatcher implements Matcher {
         List<Tree> dstChildren = dst.getChildren();
 
         Map<Type, List<Tree>> srcHistogram = new HashMap<>();
-        for (var c : srcChildren) {
+        for (Tree c : srcChildren) {
             if (!srcHistogram.containsKey(c.getType()))
                 srcHistogram.put(c.getType(), new ArrayList<>());
             srcHistogram.get(c.getType()).add(c);
         }
 
         Map<Type, List<Tree>> dstHistogram = new HashMap<>();
-        for (var c : dstChildren) {
+        for (Tree c : dstChildren) {
             if (!dstHistogram.containsKey(c.getType()))
                 dstHistogram.put(c.getType(), new ArrayList<>());
             dstHistogram.get(c.getType()).add(c);
@@ -152,8 +152,8 @@ public class SimpleBottomUpMatcher implements Matcher {
 
         for (Type t : srcHistogram.keySet()) {
             if (dstHistogram.containsKey(t) && srcHistogram.get(t).size() == 1 && dstHistogram.get(t).size() == 1) {
-                var t1 = srcHistogram.get(t).get(0);
-                var t2 = dstHistogram.get(t).get(0);
+                Tree t1 = srcHistogram.get(t).get(0);
+                Tree t2 = dstHistogram.get(t).get(0);
                 if (mappings.areBothUnmapped(t1, t2)) {
                     mappings.addMapping(t1, t2);
                     lastChanceMatch(mappings, t1, t2);

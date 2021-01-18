@@ -52,17 +52,17 @@ public class XyBottomUpMatcher implements Matcher {
 
     @Override
     public MappingStore match(Tree src, Tree dst, MappingStore mappings) {
-        for (var currentSrc : src.postOrder()) {
+        for (Tree currentSrc : src.postOrder()) {
             if (currentSrc.isRoot()) {
                 mappings.addMapping(currentSrc, dst);
                 lastChanceMatch(mappings, currentSrc, dst);
             } else if (!(mappings.isSrcMapped(currentSrc) || currentSrc.isLeaf())) {
-                var dstCandidates = getDstCandidates(mappings, currentSrc);
+                Set<Tree> dstCandidates = getDstCandidates(mappings, currentSrc);
                 Tree best = null;
-                var max = -1D;
+                double max = -1D;
 
-                for (var dstCandidate : dstCandidates) {
-                    var sim = SimilarityMetrics.jaccardSimilarity(currentSrc, dstCandidate, mappings);
+                for (Tree dstCandidate : dstCandidates) {
+                    double sim = SimilarityMetrics.jaccardSimilarity(currentSrc, dstCandidate, mappings);
                     if (sim > max && sim >= simThreshold) {
                         max = sim;
                         best = dstCandidate;
@@ -80,16 +80,16 @@ public class XyBottomUpMatcher implements Matcher {
 
     private Set<Tree> getDstCandidates(MappingStore mappings, Tree src) {
         Set<Tree> mappedSrcDescendantsInDst = new HashSet<>();
-        for (var srcDescendant : src.getDescendants()) {
-            var dstMappedToSrcDescendant = mappings.getDstForSrc(srcDescendant);
+        for (Tree srcDescendant : src.getDescendants()) {
+            Tree dstMappedToSrcDescendant = mappings.getDstForSrc(srcDescendant);
             if (dstMappedToSrcDescendant != null)
                 mappedSrcDescendantsInDst.add(dstMappedToSrcDescendant);
         }
         Set<Tree> dstCandidates = new HashSet<>();
         Set<Tree> visitedDsts = new HashSet<>();
-        for (var mappedDescendant : mappedSrcDescendantsInDst) {
+        for (Tree mappedDescendant : mappedSrcDescendantsInDst) {
             while (mappedDescendant.getParent() != null) {
-                var parent = mappedDescendant.getParent();
+                Tree parent = mappedDescendant.getParent();
                 if (visitedDsts.contains(parent))
                     break;
                 visitedDsts.add(parent);
@@ -105,18 +105,18 @@ public class XyBottomUpMatcher implements Matcher {
     private void lastChanceMatch(MappingStore mappings, Tree src, Tree dst) {
         Map<Type, List<Tree>> srcTypes = new HashMap<>();
         Map<Type, List<Tree>> dstTypes = new HashMap<>();
-        for (var srcChild : src.getChildren()) {
+        for (Tree srcChild : src.getChildren()) {
             if (!srcTypes.containsKey(srcChild.getType()))
                 srcTypes.put(srcChild.getType(), new ArrayList<>());
             srcTypes.get(srcChild.getType()).add(srcChild);
         }
-        for (var dstChild : dst.getChildren()) {
+        for (Tree dstChild : dst.getChildren()) {
             if (!dstTypes.containsKey(dstChild.getType()))
                 dstTypes.put(dstChild.getType(), new ArrayList<>());
             dstTypes.get(dstChild.getType()).add(dstChild);
         }
 
-        for (var type : srcTypes.keySet())
+        for (Type type : srcTypes.keySet())
             if (srcTypes.get(type).size() == 1 && dstTypes.get(type) != null && dstTypes.get(type).size() == 1)
                 mappings.addMapping(srcTypes.get(type).get(0), dstTypes.get(type).get(0));
     }

@@ -61,9 +61,9 @@ public class SimilarityMetrics {
         Set<Tree> dstDescendants = new HashSet<>(dst.getDescendants());
         int mappedDescendants = 0;
 
-        for (var srcDescendant : src.getDescendants()) {
+        for (Tree srcDescendant : src.getDescendants()) {
             if (mappings.isSrcMapped(srcDescendant)) {
-                var dstForSrcDescendant = mappings.getDstForSrc(srcDescendant);
+                Tree dstForSrcDescendant = mappings.getDstForSrc(srcDescendant);
                 if (dstDescendants.contains(dstForSrcDescendant))
                     mappedDescendants++;
             }

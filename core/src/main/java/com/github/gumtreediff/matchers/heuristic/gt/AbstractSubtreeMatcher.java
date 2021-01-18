@@ -56,7 +56,7 @@ public abstract class AbstractSubtreeMatcher implements Matcher {
         this.dst = dst;
         this.mappings = mappings;
 
-        var multiMappings = new MultiMappingStore();
+        MultiMappingStore multiMappings = new MultiMappingStore();
         PriorityTreeQueue srcTrees = new DefaultPriorityTreeQueue(src, this.minPriority,
                 this.priorityCalculator);
         PriorityTreeQueue dstTrees = new DefaultPriorityTreeQueue(dst, this.minPriority,
@@ -67,19 +67,19 @@ public abstract class AbstractSubtreeMatcher implements Matcher {
             if (srcTrees.isEmpty() || dstTrees.isEmpty())
                 break;
 
-            var currentPrioritySrcTrees = srcTrees.pop();
-            var currentPriorityDstTrees = dstTrees.pop();
+            List<Tree> currentPrioritySrcTrees = srcTrees.pop();
+            List<Tree> currentPriorityDstTrees = dstTrees.pop();
 
-            for (var currentSrc : currentPrioritySrcTrees)
-                for (var currentDst : currentPriorityDstTrees)
+            for (Tree currentSrc : currentPrioritySrcTrees)
+                for (Tree currentDst : currentPriorityDstTrees)
                     if (currentSrc.getMetrics().hash == currentDst.getMetrics().hash)
                         if (currentSrc.isIsomorphicTo(currentDst))
                             multiMappings.addMapping(currentSrc, currentDst);
 
-            for (var t : currentPrioritySrcTrees)
+            for (Tree t : currentPrioritySrcTrees)
                 if (!multiMappings.hasSrc(t))
                     srcTrees.open(t);
-            for (var t : currentPriorityDstTrees)
+            for (Tree t : currentPriorityDstTrees)
                 if (!multiMappings.hasDst(t))
                     dstTrees.open(t);
         }
@@ -96,7 +96,7 @@ public abstract class AbstractSubtreeMatcher implements Matcher {
 
     protected void retainBestMapping(List<Mapping> mappingList, Set<Tree> srcIgnored, Set<Tree> dstIgnored) {
         while (mappingList.size() > 0) {
-            var mapping = mappingList.remove(0);
+            Mapping mapping = mappingList.remove(0);
             if (!(srcIgnored.contains(mapping.first) || dstIgnored.contains(mapping.second))) {
                 mappings.addMappingRecursively(mapping.first, mapping.second);
                 srcIgnored.add(mapping.first);

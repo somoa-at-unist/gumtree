@@ -106,7 +106,7 @@ public class Run {
             System.err.printf("Unknown sub-command '%s'.\n", args[0]);
             displayHelp(System.err, opts);
         } else {
-            var clientArgs = new ArrayList<>(Arrays.asList(args));
+            ArrayList<String> clientArgs = new ArrayList<>(Arrays.asList(args));
             clientArgs.remove(0);
             if (Arrays.asList(origArgs).contains("--help"))
                 clientArgs.add("--help");

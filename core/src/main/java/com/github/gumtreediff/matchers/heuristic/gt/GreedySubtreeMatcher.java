@@ -39,10 +39,10 @@ public class GreedySubtreeMatcher extends AbstractSubtreeMatcher {
         // Select unique mappings first and extract ambiguous mappings.
         List<Mapping> ambiguousList = new ArrayList<>();
         Set<Tree> ignored = new HashSet<>();
-        for (var src : multiMappings.allMappedSrcs()) {
-            var isMappingUnique = false;
+        for (Tree src : multiMappings.allMappedSrcs()) {
+            boolean isMappingUnique = false;
             if (multiMappings.isSrcUnique(src)) {
-                var dst = multiMappings.getDsts(src).stream().findAny().get();
+                Tree dst = multiMappings.getDsts(src).stream().findAny().get();
                 if (multiMappings.isDstUnique(dst)) {
                     mappings.addMappingRecursively(src, dst);
                     isMappingUnique = true;
@@ -50,8 +50,8 @@ public class GreedySubtreeMatcher extends AbstractSubtreeMatcher {
             }
 
             if (!(ignored.contains(src) || isMappingUnique)) {
-                var adsts = multiMappings.getDsts(src);
-                var asrcs = multiMappings.getSrcs(multiMappings.getDsts(src).iterator().next());
+                Set<Tree> adsts = multiMappings.getDsts(src);
+                Set<Tree> asrcs = multiMappings.getSrcs(multiMappings.getDsts(src).iterator().next());
                 for (Tree asrc : asrcs)
                     for (Tree adst : adsts)
                         ambiguousList.add(new Mapping(asrc, adst));

@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestDefaultPriorityTreeQueue {
     @Test
     public void testPopOpenWithHeight() {
-        var tree = TreeLoader.getDummySrc();
-        var queue = new DefaultPriorityTreeQueue(tree, 0,
+        Tree tree = TreeLoader.getDummySrc();
+        DefaultPriorityTreeQueue queue = new DefaultPriorityTreeQueue(tree, 0,
                 PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
         assertEquals(2, queue.currentPriority());
         List<Tree> p = queue.popOpen();
@@ -50,8 +50,8 @@ public class TestDefaultPriorityTreeQueue {
 
     @Test
     public void testPopOpenWithSize() {
-        var tree = TreeLoader.getDummySrc();
-        var queue = new DefaultPriorityTreeQueue(tree, 0,
+        Tree tree = TreeLoader.getDummySrc();
+        DefaultPriorityTreeQueue queue = new DefaultPriorityTreeQueue(tree, 0,
                 PriorityTreeQueue.SIZE_PRIORITY_CALCULATOR);
         assertEquals(5, queue.currentPriority());
         List<Tree> p = queue.popOpen();
@@ -67,8 +67,8 @@ public class TestDefaultPriorityTreeQueue {
 
     @Test
     public void testPopOpenWithSizeAndMinPriority() {
-        var tree = TreeLoader.getDummySrc();
-        var queue = new DefaultPriorityTreeQueue(tree, 2,
+        Tree tree = TreeLoader.getDummySrc();
+        DefaultPriorityTreeQueue queue = new DefaultPriorityTreeQueue(tree, 2,
                 PriorityTreeQueue.SIZE_PRIORITY_CALCULATOR);
         assertEquals(5, queue.currentPriority());
         List<Tree> p = queue.popOpen();
@@ -81,9 +81,9 @@ public class TestDefaultPriorityTreeQueue {
 
     @Test
     public void testSynchronize() {
-        var tree = TreeLoader.getDummySrc();
-        var queue1 = new DefaultPriorityTreeQueue(tree, 0, PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
-        var queue2 = new DefaultPriorityTreeQueue(tree, 0, PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
+        Tree tree = TreeLoader.getDummySrc();
+        DefaultPriorityTreeQueue queue1 = new DefaultPriorityTreeQueue(tree, 0, PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
+        DefaultPriorityTreeQueue queue2 = new DefaultPriorityTreeQueue(tree, 0, PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
         queue2.popOpen();
         assertEquals(2, queue1.currentPriority());
         assertEquals(1, queue2.currentPriority());
@@ -91,7 +91,7 @@ public class TestDefaultPriorityTreeQueue {
         assertEquals(1, queue1.currentPriority());
         assertEquals(1, queue2.currentPriority());
 
-        var queue3 = new DefaultPriorityTreeQueue(tree, 0, PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
+        DefaultPriorityTreeQueue queue3 = new DefaultPriorityTreeQueue(tree, 0, PriorityTreeQueue.HEIGHT_PRIORITY_CALCULATOR);
         queue3.clear();
         PriorityTreeQueue.synchronize(queue2, queue3);
         assertTrue(queue2.isEmpty());
