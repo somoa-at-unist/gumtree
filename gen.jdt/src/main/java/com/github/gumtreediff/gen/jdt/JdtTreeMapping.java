@@ -21,26 +21,26 @@ public class JdtTreeMapping {
         System.out.println("gumtree main");
         String srcFilename = "org/joda/time/Partial.java";
         String dstFilename = "org/joda/time/Partial.java";
-        Path srcFile = FileSystems.getDefault().getPath("/home/plase1/Docker/poracle/modules/JQF/src/test/resources/patches/Patch180/Time4b/src/main/java",srcFilename);
-        Path dstFile = FileSystems.getDefault().getPath("/home/plase1/Docker/poracle/modules/JQF/src/test/resources/patches/Patch180/Time4p/src/main/java",dstFilename);
+        Path srcFile = FileSystems.getDefault().getPath("../JQF/src/test/resources/patches/Patch180/Time4b/src/main/java",srcFilename);
+        Path dstFile = FileSystems.getDefault().getPath("../JQF/src/test/resources/patches/Patch180/Time4p/src/main/java",dstFilename);
 
         //Path srcFile = FileSystems.getDefault().getPath("gen.jdt","src", "test", "resources", "simple", "Example_v0.java");
         //Path dstFile = FileSystems.getDefault().getPath("gen.jdt","src", "test", "resources", "simple", "Example_v1.java");
         try {
-            (new JdtTreeMapping()).mapping(srcFile, dstFile, srcFilename);
+            HashMap<String, Integer> hm = (new JdtTreeMapping()).mapping(srcFile, dstFile, srcFilename);
+            for(String str: hm.keySet()) {
+                System.out.println(str + "->" + hm.get(str));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     public HashMap<String, Integer> mapping(Path srcFile, Path dstFile, String srcFilename) throws IOException {
-        System.out.println("mapping!!!!");
         File f = (new File(srcFile.toString()));
-        if(f.exists()) {
-            System.out.println("exists");
-            System.out.println(f.getAbsolutePath());
-        } else {
+        if(!f.exists()) {
             System.out.println("does not exist");
             System.out.println(f.getAbsolutePath());
+            return null;
         }
         JdtTreeContext srcTreeCtxt = (JdtTreeContext) new JdtTreeGenerator().generateFrom().file(srcFile);
         JdtTreeContext dstTreeCtxt = (JdtTreeContext) new JdtTreeGenerator().generateFrom().file(dstFile);
