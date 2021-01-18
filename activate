@@ -1,0 +1,2 @@
+export GUMTREE_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export CLASSPATH=$GUMTREE_DIR/gen.jdt/build/libs/com.github.gumtreediff.jar:$CLASSPATH
